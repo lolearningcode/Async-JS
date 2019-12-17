@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 const fs = require('fs');
 const superagent = require('superagent');
 //String interpolation `${}`
@@ -7,13 +8,16 @@ fs.readFile(`${__dirname}/dog.txt`, (err, data) => {
 
     superagent
     .get(`https://dog.ceo/api/breed/${data}/images/random`)
-    .end((err, res) => {
-        if (err) return console.log(`Error: ${err.message}`);
+    //only handles fulfilled promises and doesn't handle errors
+    .then(res => {
         console.log(res.body.message);
 
         fs.writeFile('dog-image.txt', res.body.message, err => {
             console.log('Picture saved...!');
-        })
+        });
+        //error handling in catch
+    }).catch(err => {
+        console.log(`Error: ${err.message}`);
     });
 });
 
